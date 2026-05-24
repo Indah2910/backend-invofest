@@ -8,9 +8,9 @@ let events: Event[] = [];
 // dalam event controller bisa:
 //1. menampilkan data event
 export const getEvents = async (req:Request, res:Response) => {
-    const AllEvent = await prisma.event.findMay({
+    const AllEvent = await prisma.event.findMany({
         orderBy: {
-            createAt: "desc",
+            createdAt: "desc",
         },
     });
 

@@ -8,7 +8,7 @@ let categories: Category[] = [];
 // dalam categori controller bisa:
 //1. menampilkan data categori
 export const getcategory = async (req:Request, res:Response) => {
-    const all = await prisma.category.findMay({
+    const all = await prisma.category.findMany({
         orderBy: {
             createdAt: "desc"
         },
