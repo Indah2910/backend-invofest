@@ -1,65 +1,86 @@
 import { Request, Response } from "express";
-import { Event } from "../types/event.js";
 import { prisma } from "../lib/db.js";
 
-let events: Event[] = [];
-
-
-// dalam event controller bisa:
-//1. menampilkan data event
-export const getEvents = async (req:Request, res:Response) => {
-    const AllEvent = await prisma.event.findMany({
-        orderBy: {
-            createdAt: "desc",
-        },
+// 1. Menampilkan semua event
+export const getEvents = async (req: Request, res: Response) => {
+  try {
+    const all = await prisma.event.findMany({
+      orderBy: { createdAt: "desc" },
     });
-
-    res.json(AllEvent);
+    res.json(all);
+  } catch (error) {
+    res.status(500).json({ message: "Gagal mengambil data event" });
+  }
 };
 
-//2. menyimpan data event
-export const createEvent = (req:Request, res:Response) => {
-    const { name, category, tanggal, description } = req.body;
-
-    //validasi jika name, kategori, tanggal kosong
-    if (!name || !category || !tanggal) {
-        return res.status(500).json({
-            message: "nama harus diisi",
-        });
+// 2. Menyimpan event baru
+export const createEvent = async (req: Request, res: Response) => {
+  try {
+    const { name, dateEvent, location, description, categoryId } = req.body;
+    if (!name || !dateEvent) {
+      return res.status(400).json({ message: "Nama dan tanggal wajib diisi" });
     }
-
-    //mapping datanya
-    const newEvent: Event = {
-        id: Date.now(),
-        name: name,
-        category: category,
-        tanggal: tanggal,
-        description: description,   
-    };
-
-    //simpan datanya, nanti akan diganti sql
-    events.push(newEvent);
-
-    //jika berhasil disimpan
+    const newEvent = await prisma.event.create({
+      data: {
+        name,
+        dateEvent: new Date(dateEvent),
+        location: location || "",
+        description: description || "",
+        categoryId: categoryId || 1,
+      },
+    });
     res.status(201).json(newEvent);
+  } catch (error) {
+    res.status(500).json({ message: "Gagal menyimpan event" });
+  }
 };
 
-//3.mengambil data even berdasarkan id
-export const getEventById = (req:Request, res:Response) => {
-    const id = Number(req.params.id);
-    const event = events.find((e) => e.id === id);
-
-    //jika data tidak ada
-    if (!event) { 
-        return res.status(404).json({ message: "Event tidak ditemukan" });
+// 3. Ambil event by ID
+export const getEventById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const event = await prisma.event.findUnique({
+      where: { id: Number(id) },
+    });
+    if (!event) {
+      return res.status(404).json({ message: "Event tidak ditemukan" });
     }
-
-    //jika ada
     res.json(event);
+  } catch (error) {
+    res.status(500).json({ message: "Gagal mengambil event" });
+  }
 };
 
-//4.mengupdate data berdasarkan id
-export const updateEvent = (req:Request, res:Response) => {};
+// 4. Update event
+export const updateEvent = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { name, dateEvent, location, description, categoryId } = req.body;
+    const updated = await prisma.event.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        dateEvent: new Date(dateEvent),
+        location: location || "",
+        description: description || "",
+        categoryId: categoryId || 1,
+      },
+    });
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ message: "Gagal mengupdate event" });
+  }
+};
 
-//5.menghapus data event berdasarkan id
-export const deleteEvent = (req:Request, res:Response) => {};
+// 5. Hapus event
+export const deleteEvent = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await prisma.event.delete({
+      where: { id: Number(id) },
+    });
+    res.json({ message: "Event berhasil dihapus" });
+  } catch (error) {
+    res.status(500).json({ message: "Gagal menghapus event" });
+  }
+};
