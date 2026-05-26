@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 app.use("/events", eventRoute);
 app.use("/categories", categoryRoute);
-app.use("/speakers", pembicaraRoutes);
+app.use("/pembicara", pembicaraRoutes);
 
 if (process.env.NODE_ENV !== "production") {
   app.listen(port, () => {
