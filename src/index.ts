@@ -21,8 +21,10 @@ app.use("/events", eventRoute);
 app.use("/categories", categoryRoute);
 app.use("/speakers", pembicaraRoutes);
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+  });
+}
 
 export default app;
