@@ -26,11 +26,12 @@ export const createEvent = async (req: Request, res: Response) => {
         dateEvent: new Date(dateEvent),
         location: location || "",
         description: description || "",
-        categoryId: categoryId || 1,
+        categoryId: String(categoryId || "1"),
       },
     });
     res.status(201).json(newEvent);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Gagal menyimpan event" });
   }
 };
