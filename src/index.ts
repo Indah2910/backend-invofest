@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 app.use("/events", eventRoute);
 app.use("/categories", categoryRoute);
-app.use("/pembicara", pembicaraRoutes);
+app.use("/speakers", pembicaraRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
