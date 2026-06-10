@@ -6,13 +6,14 @@ import {
     deleteEvent,
 } from "../controllers/eventControllers.js";
 import express from "express";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", getEvents); //menampilkan data event
-router.post("/", createEvent); //menyimpan data event
-router.get("/:id", getEventById); //menampilkan event by  id
-router.put("/:id", updateEvent); //mengupdate data event by id
-router.delete("/:id", deleteEvent); //menghapus data event by id
+router.get("/", authMiddleware, getEvents); //menampilkan data event
+router.post("/", authMiddleware, createEvent); //menyimpan data event
+router.get("/:id", authMiddleware, getEventById); //menampilkan event by  id
+router.put("/:id", authMiddleware, updateEvent); //mengupdate data event by id
+router.delete("/:id", authMiddleware, deleteEvent); //menghapus data event by id
 
 export default router;
