@@ -25,6 +25,7 @@ export const register = async (req: Request, res: Response) => {
             .json({message: "Email sudah terdaftar"})
     }
 
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
